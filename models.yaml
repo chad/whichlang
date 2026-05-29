@@ -1,0 +1,59 @@
+# Models under test. Add open-weight models by setting provider: openai_compatible and
+# pointing base_url at Together / Fireworks / OpenRouter / vLLM / etc.
+#
+# `id` is the stable key used in results/runs.jsonl and the report — don't rename it after
+# data has been collected; add a new entry instead.
+
+models:
+  - id: claude-opus-4-7
+    provider: anthropic
+    model_id: claude-opus-4-7
+    display_name: Claude Opus 4.7
+
+  - id: claude-sonnet-4-6
+    provider: anthropic
+    model_id: claude-sonnet-4-6
+    display_name: Claude Sonnet 4.6
+
+  - id: claude-haiku-4-5
+    provider: anthropic
+    model_id: claude-haiku-4-5-20251001
+    display_name: Claude Haiku 4.5
+
+  - id: gpt-5
+    provider: openai
+    model_id: gpt-5
+    display_name: GPT-5
+
+  - id: gpt-5-mini
+    provider: openai
+    model_id: gpt-5-mini
+    display_name: GPT-5 mini
+
+  - id: gemini-2.5-pro
+    provider: google
+    model_id: gemini-2.5-pro
+    display_name: Gemini 2.5 Pro
+
+  - id: gemini-2.5-flash
+    provider: google
+    model_id: gemini-2.5-flash
+    display_name: Gemini 2.5 Flash
+
+  # Example of an OpenAI-compatible open-weight model via OpenRouter — uncomment, set
+  # OPENROUTER_API_KEY, and you're off. Same for Together (TOGETHER_API_KEY) or any
+  # vLLM/Ollama endpoint exposing the OpenAI Chat Completions API.
+  #
+  # - id: deepseek-v3
+  #   provider: openai_compatible
+  #   model_id: deepseek/deepseek-chat
+  #   display_name: DeepSeek V3
+  #   base_url: https://openrouter.ai/api/v1
+  #   api_key_env: OPENROUTER_API_KEY
+  #
+  # - id: llama-3.3-70b
+  #   provider: openai_compatible
+  #   model_id: meta-llama/Llama-3.3-70B-Instruct-Turbo
+  #   display_name: Llama 3.3 70B
+  #   base_url: https://api.together.xyz/v1
+  #   api_key_env: TOGETHER_API_KEY

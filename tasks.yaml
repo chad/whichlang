@@ -1,0 +1,117 @@
+# Language-neutral prompts. Each prompt describes WHAT to build, never HOW or in what language.
+# The whole point of the benchmark is to surface what the model defaults to when given freedom.
+#
+# Prompts deliberately read like a real developer ask: a sentence or two, no rituals,
+# no "use any language you want" hint (which itself biases choice).
+
+tasks:
+  # --- scripting / glue ---
+  - id: csv_to_json
+    category: scripting
+    prompt: |
+      I have a CSV file `data.csv` with a header row. I need a small program that reads it
+      and writes the same rows out as a JSON array of objects (one object per row, keys
+      from the header) to stdout. Please write it.
+
+  - id: rename_photos
+    category: scripting
+    prompt: |
+      I have a folder full of files like `IMG_1234.jpg`, `IMG_1235.jpg`, etc. I want a
+      script that renames them to `photo-0001.jpg`, `photo-0002.jpg`, ... in sorted order
+      by current filename. Please write it.
+
+  - id: scrape_h1
+    category: scripting
+    prompt: |
+      Write me a small program that takes a URL on the command line, fetches the page,
+      and prints out the text inside the first `<h1>` tag. Please write it.
+
+  - id: dedupe_lines
+    category: scripting
+    prompt: |
+      I have a large text file and I want to print only the lines that appear more than
+      once, along with their counts, sorted from most frequent to least. Write me a program
+      that does this.
+
+  # --- backend service / api ---
+  - id: hello_api
+    category: backend
+    prompt: |
+      Build me a small HTTP server with one endpoint, `GET /hello?name=<name>`, that returns
+      JSON like `{"greeting": "Hello, <name>!"}`. If no name is provided, default to "world".
+      Please write the server code.
+
+  - id: todo_api
+    category: backend
+    prompt: |
+      Build a small REST API for a todo list. It should support creating todos (POST /todos),
+      listing them (GET /todos), and marking one done (POST /todos/{id}/done). In-memory
+      storage is fine. Please write it.
+
+  - id: webhook_receiver
+    category: backend
+    prompt: |
+      I need a small service that listens on POST /webhook, verifies an HMAC-SHA256 signature
+      from the `X-Signature` header against a shared secret in an environment variable, and
+      logs the JSON body if valid. Please write it.
+
+  - id: rate_limited_proxy
+    category: backend
+    prompt: |
+      Write a small HTTP proxy server that forwards GET requests to an upstream URL but
+      limits each client IP to 10 requests per minute, returning 429 when over the limit.
+      Please write it.
+
+  # --- cli tool ---
+  - id: cli_word_count
+    category: cli
+    prompt: |
+      Write a command-line tool called `wcx` that takes one or more file paths as arguments
+      and prints, for each file, the number of lines, words, and bytes, plus a total at the
+      end. Please write the tool.
+
+  - id: cli_json_grep
+    category: cli
+    prompt: |
+      Write a command-line tool that reads a stream of JSON objects (one per line) from
+      stdin and prints only the ones where a given key matches a given value. Usage:
+      `jgrep <key> <value>`. Please write the tool.
+
+  - id: cli_port_check
+    category: cli
+    prompt: |
+      Write a command-line tool that takes a hostname and a list of ports as arguments and
+      prints which ports are open and which are closed. It should check ports in parallel.
+      Please write the tool.
+
+  - id: cli_dir_size
+    category: cli
+    prompt: |
+      Write a command-line tool that takes a directory path and prints the total size of
+      all files inside it (recursively), in human-readable form. Please write the tool.
+
+  # --- web app ---
+  - id: web_counter
+    category: web
+    prompt: |
+      Build me a small web app: a single page with a number, a "+" button, and a "−" button.
+      Clicking the buttons updates the number, which is persisted on the server so it survives
+      reloads and is shared across all viewers. Please write it.
+
+  - id: web_chat
+    category: web
+    prompt: |
+      Build me a minimal real-time chat web app. One page, one shared room, anyone who opens
+      it can type a message and see messages from others appear live. Please write it.
+
+  - id: web_markdown_preview
+    category: web
+    prompt: |
+      Build me a web app where I can paste Markdown into a textarea on the left and see the
+      rendered HTML on the right, updating live as I type. Please write it.
+
+  - id: web_url_shortener
+    category: web
+    prompt: |
+      Build me a simple URL shortener web app: a form where I paste a long URL and get back
+      a short link, and visiting the short link redirects to the original. Please write it.
