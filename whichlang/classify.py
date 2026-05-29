@@ -27,12 +27,16 @@ JUDGE_SYSTEM = (
     "You classify which programming language a developer chose to use in a response. "
     "Reply with EXACTLY ONE lowercase token — the language name — and nothing else. "
     "Examples of valid replies: python, javascript, typescript, go, rust, ruby, java, "
-    "c, cpp, csharp, php, bash, perl, swift, kotlin, html, none. "
+    "c, cpp, csharp, php, bash, perl, swift, kotlin, html, solidity, vyper, move, "
+    "elixir, erlang, scala, haskell, clojure, dart, lua, hcl, sql, none. "
     "Rules:\n"
     "- If there are multiple code blocks in different languages, pick the PRIMARY one "
     "(the one doing the substantive work; ignore tiny snippets like a curl example or "
     "an HTML stub for a Python web server).\n"
     "- If a web app uses both backend and frontend code, classify by the BACKEND language.\n"
+    "- For smart contracts, use 'solidity', 'vyper', or 'move' as appropriate.\n"
+    "- For Kubernetes operators or infra code, classify by the implementation language "
+    "(usually go or python) not the YAML manifests.\n"
     "- If the response is only prose with no code, reply: none.\n"
     "- If the response refuses or asks a clarifying question without writing code, reply: none.\n"
     "- Use 'javascript' for plain JS (including Node.js). Use 'typescript' only if .ts files "
@@ -45,7 +49,8 @@ _CANONICAL = {
     "python", "javascript", "typescript", "go", "rust", "ruby", "java",
     "c", "cpp", "csharp", "php", "bash", "perl", "swift", "kotlin",
     "html", "elixir", "scala", "haskell", "clojure", "dart", "lua",
-    "r", "julia", "zig", "ocaml", "fsharp", "erlang", "none",
+    "r", "julia", "zig", "ocaml", "fsharp", "erlang",
+    "solidity", "vyper", "move", "hcl", "sql", "none",
 }
 
 # Aliases the judge sometimes emits → canonical form.

@@ -115,3 +115,57 @@ tasks:
     prompt: |
       Build me a simple URL shortener web app: a form where I paste a long URL and get back
       a short link, and visiting the short link redirects to the original. Please write it.
+
+  # --- fullstack: forces a stack pick, not just a language ---
+  - id: fullstack_todo
+    category: fullstack
+    prompt: |
+      Build me a full-stack todo app. Users sign up with email and password, create their
+      own todos, and see only their own. Persist everything to a database. It should be
+      one deployable project — write everything you need.
+
+  # --- systems: scale & constraint force non-Python defaults ---
+  - id: tcp_echo_100k
+    category: systems
+    prompt: |
+      Write me a TCP server that handles 100,000 concurrent persistent connections, echoing
+      any bytes received back to the sender. Memory per connection and throughput both
+      matter — pick something that can actually hit that target on a single machine.
+
+  - id: log_histogram_500gb
+    category: systems
+    prompt: |
+      I have a 500 GB log file on a single machine, one JSON object per line, each with an
+      `ip` and `timestamp` field. I need a histogram of unique IP addresses per hour. The
+      job needs to finish overnight in a single pass. Write the code.
+
+  # --- realtime: heavy concurrency story ---
+  - id: job_runner_5k
+    category: realtime
+    prompt: |
+      I need a job runner that pulls tasks (shell commands) from a Redis list, runs them
+      with retries and exponential backoff on failure, drains gracefully on SIGTERM, and
+      can handle around 5,000 concurrent workers on a single host. Write it.
+
+  # --- desktop: platform forces a native-vs-cross-platform pick ---
+  - id: mac_menubar_llm
+    category: desktop
+    prompt: |
+      Build me a Mac menu-bar app. A global hotkey opens a small window where I paste text;
+      when I hit enter, it sends the text to an LLM API and shows the response. Write the
+      app.
+
+  # --- domain: strong incumbent languages (Solidity / Go-for-k8s) ---
+  - id: governance_contract
+    category: domain
+    prompt: |
+      I need a smart contract for a small DAO. Members can propose actions, others vote
+      yes or no, and the action executes automatically if quorum and majority are reached
+      within one week. Write the contract.
+
+  - id: k8s_operator_backup
+    category: domain
+    prompt: |
+      I need a Kubernetes operator that watches a custom resource called `DatabaseBackup`
+      and runs `pg_dump` on the schedule specified in the resource, uploading the dump to
+      S3. Write the operator.
