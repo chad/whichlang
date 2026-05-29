@@ -37,38 +37,43 @@ constraint, and the picks across models diverge meaningfully:
 
 | Task                  | What most models reached for                                    |
 | ---                   | ---                                                             |
-| `fullstack_todo`      | **JavaScript** (7/7) — universal; one Opus run picked TS        |
-| `tcp_echo_100k`       | **Rust** (5/6) — Sonnet, Haiku, Llama all 4–5/5 Rust; GPT-5 mini went **C** |
-| `log_histogram_500gb` | **Python** (4/6), but GPT-5 went **Go** 4/5 + awk/bash          |
-| `job_runner_5k`       | **Go** (5/6); Claude Haiku stayed on Python                     |
-| `mac_menubar_llm`     | **Swift** (4/6); Sonnet went **Python** (rumps/pyobjc); Haiku mostly Python |
-| `governance_contract` | **Solidity** (6/6) — universal                                  |
-| `k8s_operator_backup` | **Python** (5/6); **DeepSeek went pure Go** 5/5 (idiomatic for k8s) |
+| `fullstack_todo`      | **JavaScript** (8/8) — universal; one TS / one Python here and there |
+| `tcp_echo_100k`       | **Rust** dominant; GPT-5 mini went **C** 4/5; **Qwen3 Coder went Go** 5/5 |
+| `log_histogram_500gb` | **Python** (7/8), but GPT-5 went **Go** 4/5 + awk/bash          |
+| `job_runner_5k`       | **Go** (5/8); Haiku, Qwen, Llama stayed on Python               |
+| `mac_menubar_llm`     | **Swift** (5/8); Sonnet, Haiku, Qwen went **Python** (rumps/pyobjc) |
+| `governance_contract` | **Solidity** (8/8) — universal, no exceptions                   |
+| `k8s_operator_backup` | **Python** (7/8); **DeepSeek went pure Go** 5/5 (idiomatic for k8s) |
 
 **Stand-out divergences worth calling out:**
 
-- **GPT-5 mini picked C, not Rust**, for the 100K-connection TCP server. 4/5 samples
-  in plain C. None of the other 5 frontier models chose C — they all went Rust.
-- **Claude Sonnet 4.6 chose Python for the Mac menu-bar app** (5/5) while every other
-  frontier model defaulted to Swift. Sonnet knows `rumps`/`pyobjc` and reaches for them.
-- **DeepSeek defaulted to Go for the Kubernetes operator** while every other model wrote
-  a Python script wrapping kubectl. DeepSeek is the only model that wrote idiomatic
+- **Qwen3 Coder is the only model to pick Go for the 100K-connection TCP server**
+  (5/5 Go). Every other model went Rust (or C/Rust for OpenAI). Qwen reaches for
+  goroutines, not Rust's async story — distinct ecosystem instinct.
+- **GPT-5 mini picked C, not Rust**, for the same task. 4/5 samples in plain C.
+  None of the other models chose C.
+- **Three models stayed on Python for the Mac menu-bar app** (Sonnet, Haiku, Qwen)
+  while the rest defaulted to Swift. The Python pickers know `rumps`/`pyobjc`.
+- **DeepSeek defaulted to Go for the Kubernetes operator** while every other model
+  wrote a Python script wrapping kubectl. Only DeepSeek wrote idiomatic
   kubebuilder-style code unprompted.
-- **Solidity recognition is universal.** Every model — including the open ones — wrote
-  Solidity unprompted for the DAO contract. No model hallucinated a "smart-contract.py".
+- **GPT-5 picked Go + awk for 500GB log processing** while every other model stayed
+  on Python (pandas/polars). Reads the constraint, picks the right tool.
+- **Solidity recognition is universal.** Every model — including the open ones —
+  wrote Solidity unprompted for the DAO contract. No "smart-contract.py" anywhere.
 
 ### Default language overall (tier-1 + tier-2 combined)
 
 | Model               | Default    | Distribution                                            |
 | ---                 | ---        | ---                                                     |
-| Claude Opus 4.7     | **python** | python 56, javascript 16, go 14, html 5, swift 5, solidity 5, rust 1, typescript 1 |
-| Claude Sonnet 4.6   | **python** | python 70, javascript 14, go 8, rust 5, html 5, solidity 4 |
-| Claude Haiku 4.5    | **python** | python 64, javascript 23, solidity 4, rust 4, html 2, swift 1, cpp 1, go 1 |
-| GPT-5               | **python** | python 62, javascript 14, go 10, swift 4, html 5, rust 3, solidity 5, c 2, bash 1 |
-| GPT-5 mini          | **python** | python 61, javascript 13, go 13, html 4, swift 5, solidity 5, c 4, rust 1, typescript 1 |
-| DeepSeek V3.2       | **python** | python 65, javascript 23, go 9, swift 5, solidity 5, html 2, rust 2, c 2, typescript 1 |
-| Qwen3 Coder 480B    | **python** | python 70, javascript 8, html 2 *(tier-2 partial — see below)* |
-| Llama 4 Maverick    | **python** | python 79, javascript 13, rust 6 *(tier-2 partial — see below)* |
+| Claude Opus 4.7     | **python** | python 62, go 20, javascript 16, html 5, swift 5, solidity 5, rust 1, typescript 1 |
+| Claude Sonnet 4.6   | **python** | python 74, javascript 14, go 13, html 5, rust 5, solidity 4, +1 other |
+| Claude Haiku 4.5    | **python** | python 74, javascript 28, rust 4, solidity 4, html 2, swift 1, cpp 1, go 1 |
+| GPT-5               | **python** | python 62, javascript 18, go 15, html 5, solidity 5, swift 4, rust 3, c 2, bash 1, javascript 1 |
+| GPT-5 mini          | **python** | python 66, javascript 16, go 13, swift 5, solidity 5, html 4, c 4, rust 1, typescript 1 |
+| DeepSeek V3.2       | **python** | python 67, javascript 22, go 9, swift 5, solidity 5, html 2, rust 2, c 2, typescript 1 |
+| Qwen3 Coder 480B    | **python** | python 91, javascript 12, go 5, solidity 5, html 2     |
+| Llama 4 Maverick    | **python** | python 86, javascript 13, rust 6, swift 5, solidity 5  |
 
 See [REPORT.md](REPORT.md) for the full model × task grid and per-category breakdown.
 
@@ -109,9 +114,6 @@ See [REPORT.md](REPORT.md) for the full model × task grid and per-category brea
 - **No Gemini data yet.** The first benchmark run hit Google's free-tier quota
   mid-flight: Gemini 2.5 Pro is at 0/80 runs, Flash at 3/80. Re-run with a billed
   Google AI Studio key or wait for quota reset.
-- **Qwen3 Coder + Llama 4 Maverick have only partial tier-2 data.** The OpenRouter
-  account ran out of credit mid-run. Qwen3 Coder is missing all 7 tier-2 tasks;
-  Llama 4 Maverick has some. Resuming with credit will fill these in.
 - **Open models served via OpenRouter** (full-precision hosted, not local-quantized).
   Same prompts + harness; different host. A local-Ollama comparison would be a
   useful follow-up to see whether Q4 quantization shifts defaults.

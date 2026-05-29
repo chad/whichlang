@@ -1,6 +1,6 @@
 # whichlang — what language do LLMs reach for?
 
-Generated from `results/runs.jsonl`. Counts: **871** classified runs across **10** models and **23** tasks (209 errors excluded).
+Generated from `results/runs.jsonl`. Counts: **923** classified runs across **10** models and **23** tasks (157 errors excluded).
 
 Each task prompt describes WHAT to build, never HOW or in what language. Responses are classified by a separate judge LLM. See `tasks.yaml` for prompts.
 
@@ -17,8 +17,8 @@ Modal language across every task this model was run on.
 | GPT-5 mini | **python** | python 66, javascript 16, go 13, swift 5, solidity 5, +10 other |
 | Gemini 2.5 Flash | **python** | python 3 |
 | DeepSeek V3.2 | **python** | python 67, javascript 22, go 9, swift 5, solidity 5, +7 other |
-| Qwen3 Coder 480B | **python** | python 70, javascript 8, html 2 |
-| Llama 4 Maverick | **python** | python 79, javascript 13, rust 6 |
+| Qwen3 Coder 480B | **python** | python 91, javascript 12, go 5, solidity 5, html 2 |
+| Llama 4 Maverick | **python** | python 86, javascript 13, rust 6, swift 5, solidity 5 |
 
 ## Category: scripting
 
@@ -83,6 +83,7 @@ Modal language across every task this model was run on.
 | GPT-5 | **javascript** | javascript 4, python 1 |
 | GPT-5 mini | **javascript** | javascript 4, typescript 1 |
 | DeepSeek V3.2 | **javascript** | javascript 4, typescript 1 |
+| Qwen3 Coder 480B | **javascript** | javascript 4, python 1 |
 | Llama 4 Maverick | **javascript** | javascript 5 |
 
 ## Category: systems
@@ -95,6 +96,7 @@ Modal language across every task this model was run on.
 | GPT-5 | **go** | go 4, rust 3, c 2, bash 1 |
 | GPT-5 mini | **python** | python 5, c 4, rust 1 |
 | DeepSeek V3.2 | **python** | python 6, rust 2, c 2 |
+| Qwen3 Coder 480B | **go** | go 5, python 5 |
 | Llama 4 Maverick | **rust** | rust 5, python 5 |
 
 ## Category: realtime
@@ -107,7 +109,8 @@ Modal language across every task this model was run on.
 | GPT-5 | **go** | go 5 |
 | GPT-5 mini | **go** | go 5 |
 | DeepSeek V3.2 | **go** | go 3, python 2 |
-| Llama 4 Maverick | **python** | python 3 |
+| Qwen3 Coder 480B | **python** | python 5 |
+| Llama 4 Maverick | **python** | python 5 |
 
 ## Category: desktop
 
@@ -119,6 +122,8 @@ Modal language across every task this model was run on.
 | GPT-5 | **swift** | swift 4, javascript 1 |
 | GPT-5 mini | **swift** | swift 5 |
 | DeepSeek V3.2 | **swift** | swift 5 |
+| Qwen3 Coder 480B | **python** | python 5 |
+| Llama 4 Maverick | **swift** | swift 5 |
 
 ## Category: domain
 
@@ -130,6 +135,8 @@ Modal language across every task this model was run on.
 | GPT-5 | **solidity** | solidity 5, python 5 |
 | GPT-5 mini | **solidity** | solidity 5, python 5 |
 | DeepSeek V3.2 | **solidity** | solidity 5, go 5 |
+| Qwen3 Coder 480B | **solidity** | solidity 5, python 5 |
+| Llama 4 Maverick | **solidity** | solidity 5, python 5 |
 
 ## Full grid (model × task)
 
@@ -143,8 +150,8 @@ Modal language across every task this model was run on.
 | Gemini 2.5 Pro | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | Gemini 2.5 Flash | python 2 | — | python 1 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | DeepSeek V3.2 | python 5 | python 5 | python 5 | python 5 | python 4, javascript 1 | javascript 4, python 1 | python 3, javascript 2 | python 4, go 1 | python 5 | python 5 | python 5 | python 5 | javascript 3, python 2 | javascript 5 | javascript 3, html 2 | python 5 | javascript 4, typescript 1 | rust 2, c 2, +1 other | python 5 | go 3, python 2 | swift 5 | solidity 5 | go 5 |
-| Qwen3 Coder 480B | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | javascript 5 | javascript 3, html 2 | python 5 | — | — | — | — | — | — | — |
-| Llama 4 Maverick | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 3, javascript 2 | python 5 | python 4, rust 1 | python 5 | python 5 | python 5 | python 4, javascript 1 | javascript 5 | python 5 | python 5 | javascript 5 | rust 5 | python 5 | python 3 | — | — | — |
+| Qwen3 Coder 480B | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | javascript 5 | javascript 3, html 2 | python 5 | javascript 4, python 1 | go 5 | python 5 | python 5 | python 5 | solidity 5 | python 5 |
+| Llama 4 Maverick | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 3, javascript 2 | python 5 | python 4, rust 1 | python 5 | python 5 | python 5 | python 4, javascript 1 | javascript 5 | python 5 | python 5 | javascript 5 | rust 5 | python 5 | python 5 | swift 5 | solidity 5 | python 5 |
 
 ---
 
