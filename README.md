@@ -14,7 +14,7 @@ never invite the model to choose one — that would change what's being measured
 
 ## Latest results
 
-8 models × 23 tasks × 5 samples. Full table in [REPORT.md](REPORT.md).
+11 models × 23 tasks × 5 samples. Full table in [REPORT.md](REPORT.md).
 
 The task set is split into two tiers:
 
@@ -37,30 +37,36 @@ constraint, and the picks across models diverge meaningfully:
 
 | Task                  | What most models reached for                                    |
 | ---                   | ---                                                             |
-| `fullstack_todo`      | **JavaScript** (8/8) — universal; one TS / one Python here and there |
-| `tcp_echo_100k`       | **Rust** dominant; GPT-5 mini went **C** 4/5; **Qwen3 Coder went Go** 5/5 |
-| `log_histogram_500gb` | **Python** (7/8), but GPT-5 went **Go** 4/5 + awk/bash          |
-| `job_runner_5k`       | **Go** (5/8); Haiku, Qwen, Llama stayed on Python               |
-| `mac_menubar_llm`     | **Swift** (5/8); Sonnet, Haiku, Qwen went **Python** (rumps/pyobjc) |
-| `governance_contract` | **Solidity** (8/8) — universal, no exceptions                   |
-| `k8s_operator_backup` | **Python** (7/8); **DeepSeek went pure Go** 5/5 (idiomatic for k8s) |
+| `fullstack_todo`      | **JavaScript** dominant; **Mistral & Kimi default to TypeScript**; Grok picks plain HTML twice |
+| `tcp_echo_100k`       | **Rust** dominant; **Qwen → Go 5/5**, **Grok → Go/C 5/5**, **GPT-5 mini → C 4/5** — Rust is not unanimous |
+| `log_histogram_500gb` | **Python** (8/11); **GPT-5 → Go + awk**, **Kimi → Rust 3/5**, **Grok → Go**   |
+| `job_runner_5k`       | **Go** (7/11); Haiku, Qwen, Llama stayed on Python              |
+| `mac_menubar_llm`     | **Swift** (7/11); Sonnet, Haiku, Qwen went **Python** (rumps/pyobjc) |
+| `governance_contract` | **Solidity** (11/11) — universal, no exceptions across any model |
+| `k8s_operator_backup` | **Python** (8/11); **DeepSeek & Mistral → Go 5/5** (idiomatic kubebuilder); Kimi splits 3/2 |
 
 **Stand-out divergences worth calling out:**
 
-- **Qwen3 Coder is the only model to pick Go for the 100K-connection TCP server**
-  (5/5 Go). Every other model went Rust (or C/Rust for OpenAI). Qwen reaches for
-  goroutines, not Rust's async story — distinct ecosystem instinct.
-- **GPT-5 mini picked C, not Rust**, for the same task. 4/5 samples in plain C.
-  None of the other models chose C.
-- **Three models stayed on Python for the Mac menu-bar app** (Sonnet, Haiku, Qwen)
-  while the rest defaulted to Swift. The Python pickers know `rumps`/`pyobjc`.
-- **DeepSeek defaulted to Go for the Kubernetes operator** while every other model
-  wrote a Python script wrapping kubectl. Only DeepSeek wrote idiomatic
-  kubebuilder-style code unprompted.
-- **GPT-5 picked Go + awk for 500GB log processing** while every other model stayed
-  on Python (pandas/polars). Reads the constraint, picks the right tool.
-- **Solidity recognition is universal.** Every model — including the open ones —
-  wrote Solidity unprompted for the DAO contract. No "smart-contract.py" anywhere.
+- **TypeScript bias is European/Chinese, not US.** Mistral Large (4/5 TS) and Kimi
+  K2.6 (3/5 TS) are the only models that default to TypeScript for the fullstack
+  app. Every US model goes plain JavaScript. New axis of differentiation.
+- **Qwen3 Coder picks Go (not Rust) for 100K TCP connections** (5/5 Go). Every
+  Western frontier model went Rust. Qwen reaches for goroutines.
+- **Grok 4.3 split Go/C for 100K TCP** (3 Go, 2 C, zero Rust). Only model that
+  refused Rust entirely for this task. Also produced 11 HTML responses across
+  categories — likes shipping a single-file HTML app where others build a stack.
+- **Kimi K2.6 is the only model to flip log-500gb to Rust** (3/5 Rust). The
+  Rust-friendliest model in the dataset overall (8 Rust picks, more than any other).
+- **GPT-5 mini picks C, not Rust**, for the same TCP server. 4/5 samples in plain C.
+- **DeepSeek and Mistral both write idiomatic Go for the k8s operator** (5/5 each).
+  Every other model wrote a Python script wrapping kubectl.
+- **Sonnet, Haiku, and Qwen stay on Python for the Mac menu-bar app** while the
+  rest default to Swift. Python pickers know `rumps`/`pyobjc`.
+- **Mistral Large is the most-diverse-overall model.** Top categories: python 60,
+  go 20, javascript 16, rust 5, swift 5, solidity 5, typescript 4. Picks
+  appropriately by task more than any other model in the test.
+- **Solidity recognition is universal.** 11/11 models wrote Solidity unprompted
+  for the DAO contract. No model hallucinated a "smart-contract.py" anywhere.
 
 ### Default language overall (tier-1 + tier-2 combined)
 
@@ -69,11 +75,14 @@ constraint, and the picks across models diverge meaningfully:
 | Claude Opus 4.7     | **python** | python 62, go 20, javascript 16, html 5, swift 5, solidity 5, rust 1, typescript 1 |
 | Claude Sonnet 4.6   | **python** | python 74, javascript 14, go 13, html 5, rust 5, solidity 4, +1 other |
 | Claude Haiku 4.5    | **python** | python 74, javascript 28, rust 4, solidity 4, html 2, swift 1, cpp 1, go 1 |
-| GPT-5               | **python** | python 62, javascript 18, go 15, html 5, solidity 5, swift 4, rust 3, c 2, bash 1, javascript 1 |
+| GPT-5               | **python** | python 62, javascript 18, go 15, html 5, solidity 5, swift 4, rust 3, c 2, bash 1 |
 | GPT-5 mini          | **python** | python 66, javascript 16, go 13, swift 5, solidity 5, html 4, c 4, rust 1, typescript 1 |
 | DeepSeek V3.2       | **python** | python 67, javascript 22, go 9, swift 5, solidity 5, html 2, rust 2, c 2, typescript 1 |
 | Qwen3 Coder 480B    | **python** | python 91, javascript 12, go 5, solidity 5, html 2     |
 | Llama 4 Maverick    | **python** | python 86, javascript 13, rust 6, swift 5, solidity 5  |
+| Mistral Large 2512  | **python** | python 60, go 20, javascript 16, rust 5, swift 5, solidity 5, typescript 4 |
+| Grok 4.3            | **python** | python 65, go 18, html 11, javascript 8, swift 5, solidity 5, c 2, bash 1 |
+| Kimi K2.6           | **python** | python 61, javascript 14, go 13, rust 8, html 6, solidity 5, swift 4, typescript 3 |
 
 See [REPORT.md](REPORT.md) for the full model × task grid and per-category breakdown.
 

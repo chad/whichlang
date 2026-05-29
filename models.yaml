@@ -62,5 +62,26 @@ models:
     base_url: https://openrouter.ai/api/v1
     api_key_env: OPENROUTER_API_KEY
 
+  - id: mistral-large-2512
+    provider: openai_compatible
+    model_id: mistralai/mistral-large-2512
+    display_name: Mistral Large 2512
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+  - id: grok-4.3
+    provider: openai_compatible
+    model_id: x-ai/grok-4.3
+    display_name: Grok 4.3
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+  - id: kimi-k2.6
+    provider: openai_compatible
+    model_id: moonshotai/kimi-k2.6
+    display_name: Kimi K2.6
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
   # Other OpenAI-compatible hosts work the same way — point base_url at Together /
   # Fireworks / DeepInfra / vLLM / Ollama (http://localhost:11434/v1) and set the env var.
