@@ -73,13 +73,20 @@ def render(rows: list[dict], models_yaml: Path, tasks_yaml: Path) -> str:
         if t["category"] not in categories:
             categories.append(t["category"])
 
+    # Dedup: keep the LATEST row per (model, task, sample_idx). If a sample errored
+    # or was empty the first time and got retried later, the retry wins.
+    latest: dict[tuple[str, str, int], dict] = {}
+    for row in rows:
+        key = (row["model_id"], row["task_id"], row.get("sample_idx", 0))
+        latest[key] = row
+
     # Index: (model, task) → Counter, (model, category) → Counter, model → Counter
     per_cell: dict[tuple[str, str], Counter] = defaultdict(Counter)
     per_category: dict[tuple[str, str], Counter] = defaultdict(Counter)
     per_model: dict[str, Counter] = defaultdict(Counter)
     total_runs = 0
     errors = 0
-    for row in rows:
+    for row in latest.values():
         if row.get("error"):
             errors += 1
             continue

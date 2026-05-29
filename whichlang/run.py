@@ -60,9 +60,13 @@ def _load_done(path: Path) -> set[tuple[str, str, int]]:
                 row = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            # Only count as "done" if the run actually produced a classified language.
-            # Errored rows stay in the JSONL for the record but get retried on resume.
+            # Only count as "done" if the run actually produced a classified language
+            # with a non-empty response. Errored rows and empty-response "none" rows
+            # (transient provider failures) stay in the JSONL for the record but get
+            # retried on resume. A real "none" with prose-only output is kept as done.
             if row.get("error") or row.get("language") in (None, "error"):
+                continue
+            if row.get("language") == "none" and not (row.get("response") or "").strip():
                 continue
             try:
                 done.add((row["model_id"], row["task_id"], row["sample_idx"]))

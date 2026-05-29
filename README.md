@@ -14,33 +14,41 @@ never invite the model to choose one — that would change what's being measured
 
 ## Latest results
 
-5 models × 16 tasks × 5 samples = 400 classified runs (Gemini results pending — see
+8 models × 16 tasks × 5 samples = 640 classified runs (Gemini results pending — see
 [Limitations](#limitations)). Full table in [REPORT.md](REPORT.md).
 
 ### Default language across all tasks
 
-| Model            | Default    | Distribution                                |
-| ---              | ---        | ---                                         |
-| Claude Opus 4.7  | **python** | python 51, javascript 13, go 11, html 5     |
-| Claude Sonnet 4.6| **python** | python 59, javascript 9, go 7, html 5       |
-| Claude Haiku 4.5 | **python** | python 55, javascript 23, html 2            |
-| GPT-5            | **python** | python 56, javascript 13, go 6, html 5      |
-| GPT-5 mini       | **python** | python 56, javascript 12, go 8, html 4      |
+| Model               | Default    | Distribution                                |
+| ---                 | ---        | ---                                         |
+| Claude Opus 4.7     | **python** | python 51, javascript 13, go 11, html 5     |
+| Claude Sonnet 4.6   | **python** | python 59, javascript 9, go 7, html 5       |
+| Claude Haiku 4.5    | **python** | python 55, javascript 23, html 2            |
+| GPT-5               | **python** | python 56, javascript 13, go 6, html 5      |
+| GPT-5 mini          | **python** | python 56, javascript 12, go 8, html 4      |
+| DeepSeek V3.2       | **python** | python 59, javascript 18, html 2, go 1      |
+| Qwen3 Coder 480B    | **python** | python 70, javascript 8, html 2             |
+| Llama 4 Maverick    | **python** | python 71, javascript 8, rust 1             |
 
 ### Headline findings
 
-- **Python is the universal default.** Across 5 models, **scripting and CLI tasks are
-  Python 100% of the time** (5/5 samples on every prompt, every model). No exceptions.
-- **The default flips to JavaScript only for web apps.** 4 of 5 models default to
-  JavaScript for the web category; Sonnet 4.6 is the holdout, still leaning Python.
-- **Backend services are model-dependent.** Sonnet 4.6 leans hard Python (17/20).
-  Haiku 4.5 actually prefers JavaScript over Python (11 vs 9). GPT-5 / GPT-5 mini
-  reach for Python first with Go as a strong secondary.
-- **Go shows up almost exclusively for `rate_limited_proxy` and CLI tools** — and
-  even there it's model-dependent. Opus and GPT-5 mini go 5/5 Go on the proxy task;
-  Sonnet and Haiku stay on Python.
-- **No model picked Rust, TypeScript, Java, Ruby, or anything else even once.** The
-  observed language set is `{python, javascript, go, html}` plus a tiny smattering.
+- **Python is the universal default.** All 8 models — frontier closed and open
+  weights alike — default to Python overall. **Scripting and CLI tasks are Python
+  ~100% of the time** across the board.
+- **The "switch to JavaScript for web" is a frontier reflex.** All 5 closed-source
+  frontier models + DeepSeek flip their default to JavaScript for web-app tasks.
+  The two open flagship models (Qwen3 Coder, Llama 4 Maverick) **stay on Python**
+  for most web tasks — they only switch to JS for `web_chat`.
+- **Qwen3 Coder is the most Python-heavy model in the test** at 70/80 — more than
+  any frontier model. Despite being a coding-tuned model, it almost never reaches
+  for an alternative.
+- **Backend service defaults split.** Sonnet, GPT-5, GPT-5 mini, DeepSeek, Qwen,
+  and Llama all default to Python. Claude Haiku actually prefers JavaScript over
+  Python here (11 vs 9). Opus leans Python with Go as a near-equal second.
+- **Go shows up almost exclusively for `rate_limited_proxy` and a few CLI tasks**
+  on Claude / GPT-5 — open models picked Go just once across 240 runs.
+- **Llama 4 Maverick is the only model to pick Rust** (1/5 on `cli_word_count`).
+  The first non-`{python, javascript, go, html}` choice in the entire dataset.
 
 See [REPORT.md](REPORT.md) for the full model × task grid and per-category breakdown.
 
@@ -78,14 +86,16 @@ See [REPORT.md](REPORT.md) for the full model × task grid and per-category brea
 
 ## Limitations
 
-- **No Gemini data yet.** The benchmark run hit Google's free-tier quota mid-flight:
-  Gemini 2.5 Pro is at 0/80 runs, Flash at 3/80. Re-run with a billed Google AI Studio
-  key or wait for quota reset.
-- **No open models yet.** The current run only covers Anthropic + OpenAI. See
-  [plan.md](plan.md) for the DeepSeek / Qwen / Llama expansion.
-- **Single judge** (Claude Haiku 4.5). A judge that's wrong systematically would be hard
-  to catch from this side. The judge prompt is constrained to one token and the raw
-  response is stored, so a second judge could rescore the existing JSONL without re-running.
+- **No Gemini data yet.** The first benchmark run hit Google's free-tier quota
+  mid-flight: Gemini 2.5 Pro is at 0/80 runs, Flash at 3/80. Re-run with a billed
+  Google AI Studio key or wait for quota reset.
+- **Open models served via OpenRouter** (full-precision hosted, not local-quantized).
+  Same prompts + harness; different host. A local-Ollama comparison would be a
+  useful follow-up to see whether Q4 quantization shifts defaults.
+- **Single judge** (Claude Haiku 4.5). A judge that's wrong systematically would be
+  hard to catch from this side. The judge prompt is constrained to one token and the
+  raw response is stored, so a second judge could rescore the existing JSONL without
+  re-running.
 - **English prompts only.** Defaults may differ in other languages.
 - **Snapshot in time.** Model defaults change with versions; results are dated by commit.
 

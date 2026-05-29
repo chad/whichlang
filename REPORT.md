@@ -1,6 +1,6 @@
 # whichlang — what language do LLMs reach for?
 
-Generated from `results/runs.jsonl`. Counts: **403** classified runs across **7** models and **16** tasks (157 errors excluded).
+Generated from `results/runs.jsonl`. Counts: **643** classified runs across **10** models and **16** tasks (157 errors excluded).
 
 Each task prompt describes WHAT to build, never HOW or in what language. Responses are classified by a separate judge LLM. See `tasks.yaml` for prompts.
 
@@ -16,6 +16,9 @@ Modal language across every task this model was run on.
 | GPT-5 | **python** | python 56, javascript 13, go 6, html 5 |
 | GPT-5 mini | **python** | python 56, javascript 12, go 8, html 4 |
 | Gemini 2.5 Flash | **python** | python 3 |
+| DeepSeek V3.2 | **python** | python 59, javascript 18, html 2, go 1 |
+| Qwen3 Coder 480B | **python** | python 70, javascript 8, html 2 |
+| Llama 4 Maverick | **python** | python 71, javascript 8, rust 1 |
 
 ## Category: scripting
 
@@ -27,6 +30,9 @@ Modal language across every task this model was run on.
 | GPT-5 | **python** | python 20 |
 | GPT-5 mini | **python** | python 20 |
 | Gemini 2.5 Flash | **python** | python 3 |
+| DeepSeek V3.2 | **python** | python 20 |
+| Qwen3 Coder 480B | **python** | python 20 |
+| Llama 4 Maverick | **python** | python 20 |
 
 ## Category: backend
 
@@ -37,6 +43,9 @@ Modal language across every task this model was run on.
 | Claude Haiku 4.5 | **javascript** | javascript 11, python 9 |
 | GPT-5 | **python** | python 11, go 6, javascript 3 |
 | GPT-5 mini | **python** | python 11, go 8, javascript 1 |
+| DeepSeek V3.2 | **python** | python 12, javascript 7, go 1 |
+| Qwen3 Coder 480B | **python** | python 20 |
+| Llama 4 Maverick | **python** | python 18, javascript 2 |
 
 ## Category: cli
 
@@ -47,6 +56,9 @@ Modal language across every task this model was run on.
 | Claude Haiku 4.5 | **python** | python 20 |
 | GPT-5 | **python** | python 20 |
 | GPT-5 mini | **python** | python 20 |
+| DeepSeek V3.2 | **python** | python 20 |
+| Qwen3 Coder 480B | **python** | python 20 |
+| Llama 4 Maverick | **python** | python 19, rust 1 |
 
 ## Category: web
 
@@ -57,6 +69,9 @@ Modal language across every task this model was run on.
 | Claude Haiku 4.5 | **javascript** | javascript 12, python 6, html 2 |
 | GPT-5 | **javascript** | javascript 10, html 5, python 5 |
 | GPT-5 mini | **javascript** | javascript 11, python 5, html 4 |
+| DeepSeek V3.2 | **javascript** | javascript 11, python 7, html 2 |
+| Qwen3 Coder 480B | **python** | python 10, javascript 8, html 2 |
+| Llama 4 Maverick | **python** | python 14, javascript 6 |
 
 ## Full grid (model × task)
 
@@ -69,6 +84,9 @@ Modal language across every task this model was run on.
 | GPT-5 mini | python 5 | python 5 | python 5 | python 5 | python 3, go 2 | python 4, go 1 | python 4, javascript 1 | go 5 | python 5 | python 5 | python 5 | python 5 | javascript 5 | javascript 5 | html 4, javascript 1 | python 5 |
 | Gemini 2.5 Pro | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | Gemini 2.5 Flash | python 2 | — | python 1 | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| DeepSeek V3.2 | python 5 | python 5 | python 5 | python 5 | python 4, javascript 1 | javascript 4, python 1 | python 3, javascript 2 | python 4, go 1 | python 5 | python 5 | python 5 | python 5 | javascript 3, python 2 | javascript 5 | javascript 3, html 2 | python 5 |
+| Qwen3 Coder 480B | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | javascript 5 | javascript 3, html 2 | python 5 |
+| Llama 4 Maverick | python 5 | python 5 | python 5 | python 5 | python 5 | python 5 | python 3, javascript 2 | python 5 | python 4, rust 1 | python 5 | python 5 | python 5 | python 4, javascript 1 | javascript 5 | python 5 | python 5 |
 
 ---
 

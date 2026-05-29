@@ -40,20 +40,27 @@ models:
     model_id: gemini-2.5-flash
     display_name: Gemini 2.5 Flash
 
-  # Example of an OpenAI-compatible open-weight model via OpenRouter — uncomment, set
-  # OPENROUTER_API_KEY, and you're off. Same for Together (TOGETHER_API_KEY) or any
-  # vLLM/Ollama endpoint exposing the OpenAI Chat Completions API.
-  #
-  # - id: deepseek-v3
-  #   provider: openai_compatible
-  #   model_id: deepseek/deepseek-chat
-  #   display_name: DeepSeek V3
-  #   base_url: https://openrouter.ai/api/v1
-  #   api_key_env: OPENROUTER_API_KEY
-  #
-  # - id: llama-3.3-70b
-  #   provider: openai_compatible
-  #   model_id: meta-llama/Llama-3.3-70B-Instruct-Turbo
-  #   display_name: Llama 3.3 70B
-  #   base_url: https://api.together.xyz/v1
-  #   api_key_env: TOGETHER_API_KEY
+  # --- open-weight models via OpenRouter ---
+  - id: deepseek-v3.2
+    provider: openai_compatible
+    model_id: deepseek/deepseek-v3.2
+    display_name: DeepSeek V3.2
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+  - id: qwen3-coder
+    provider: openai_compatible
+    model_id: qwen/qwen3-coder
+    display_name: Qwen3 Coder 480B
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+  - id: llama-4-maverick
+    provider: openai_compatible
+    model_id: meta-llama/llama-4-maverick
+    display_name: Llama 4 Maverick
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+
+  # Other OpenAI-compatible hosts work the same way — point base_url at Together /
+  # Fireworks / DeepInfra / vLLM / Ollama (http://localhost:11434/v1) and set the env var.
