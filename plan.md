@@ -78,3 +78,81 @@ Adjustable in models.yaml. Starting with:
 - How many samples per (model, task)? Starting plan: 5. Trades cost vs. distribution confidence.
 - Do we also capture *reasoning* (does the model justify the choice)? Could be a follow-up column.
 - Should the prompt forbid clarifying questions or let "I'd need to know X first" responses count as a no-op? Currently treating no-code responses as `none` in the distribution.
+
+---
+
+# Next: add open models
+
+The harness already supports any OpenAI-compatible endpoint, so adding open models is a
+YAML edit, not a code change. The interesting decision is which ones, and via what host.
+
+## Recommended open models to add (in priority order)
+
+1. **DeepSeek V3.1** (or V3.2 if released) — frontier-competitive, MIT/MIT-ish license,
+   wide deployment. Has both a reasoning ("R1"-style) and non-reasoning variant.
+2. **Qwen 3 Coder** (32B or 480B if hosted) — Alibaba's coding-tuned line is the open
+   model most likely to behave *differently* from Western frontier models on language
+   choice. If anything is going to default to Java or C++, it's a Chinese coder model.
+3. **Llama 3.3 70B Instruct** (or Llama 4 Maverick if released and stable) — Meta's
+   flagship instruct line, widely cited as the open baseline.
+
+Stretch picks (round it out to 5 if budget allows):
+- **Mistral Large 2** — European frontier-tier open weights.
+- **Gemma 3 27B** — Google's open line, comparator for Gemini.
+- **GLM 4** — increasingly cited.
+
+## How to serve them
+
+### Recommended: OpenRouter (hosted, single API key, all three above)
+
+- One key (`OPENROUTER_API_KEY`), one base_url (`https://openrouter.ai/api/v1`), routes
+  to DeepSeek / Qwen / Llama and dozens more.
+- Full-precision weights (no quantization artifacts skewing defaults).
+- Pay-as-you-go, no monthly minimum. Whole 3-model × 16-task × 5-sample run would be
+  under $1 for these models (they're cheap on OpenRouter).
+- Slots straight into our `openai_compatible` provider — already supported, no new code.
+
+### Alternative: Together AI / Fireworks / DeepInfra
+
+- Same OpenAI-compatible shape, separate API keys per host.
+- Sometimes lower latency or better availability than OpenRouter for a specific model.
+- Worth using as a fallback when OpenRouter is rate-limiting.
+
+### Local: Ollama (for reproducibility, smaller models)
+
+- User has Ollama installed (0.5.3 — current is 0.6.x+, **update first**:
+  `curl https://ollama.com/install.sh | sh` or download from ollama.com).
+- Daemon needs to be running (`ollama serve` or launch the Mac app).
+- Exposes an OpenAI-compatible endpoint at `http://localhost:11434/v1` — drops into our
+  `openai_compatible` provider, set `api_key_env` to a dummy (Ollama doesn't check it).
+- Quantization caveat: Ollama defaults to Q4_K_M (4-bit). For a "what does this model
+  default to?" benchmark this may not matter much, but it's worth noting in REPORT.md.
+- Hardware limit: 70B models need ~40GB+ RAM. 7B–32B models run well on M-series Macs.
+  For Chad's machine, realistic Ollama set: qwen3-coder (7B/32B), llama3.3 (depending
+  on RAM), deepseek-r1:32b (the distilled variant).
+
+## Plan
+
+1. [ ] Update Ollama to 0.6.x+ and start the daemon
+2. [ ] Decide: hosted (OpenRouter, full-precision) vs local (Ollama, quantized) vs both
+3. [ ] Add 3 open models to `models.yaml` based on the chosen host
+4. [ ] Run benchmark on just those models (`--models <ids>`); ~$0.50–1.00 on OpenRouter
+5. [ ] Regenerate REPORT.md; commit JSONL + updated report
+6. [ ] Document quantization caveat in README if Ollama path used
+7. [ ] Retry Gemini once free-tier quota resets (or move to billed key) so the table is
+       complete
+
+## Why these picks specifically?
+
+The benchmark is most interesting when the model set *spans the space of defaults*.
+Three Anthropic + two OpenAI models all defaulted to Python — not surprising, similar
+training data. The open model picks above are chosen to **stress-test that assumption**:
+
+- **DeepSeek** is Chinese training data, MoE architecture, distinct lineage.
+- **Qwen Coder** is explicitly coding-tuned and Chinese-origin — most likely to surface
+  a different default if one exists in the open-model space.
+- **Llama** is the most-deployed open baseline; differences from frontier models tell us
+  whether "the default is Python" is a frontier phenomenon or universal.
+
+If all three also default to Python, that's itself the story: it's not training-data bias
+or RLHF preference, it's that Python *is* the right answer for these prompts.

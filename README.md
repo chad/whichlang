@@ -1,31 +1,95 @@
 # whichlang
 
-When you hand an LLM a coding task and don't tell it what language to use, what does it reach for?
+**When you hand an LLM a coding task and don't tell it what language to use, what does it reach for?**
 
-`whichlang` is a small harness that asks a fleet of LLMs to write code for common,
-language-agnostic tasks and tallies the languages they pick. The output is a markdown
-table that lets a developer see at a glance what each model defaults to — useful for
-understanding what you're going to get when you ask for "a script that..." or "a small
-web app for...".
+`whichlang` is a small benchmark harness that asks frontier LLMs to write code for common,
+language-agnostic tasks and tallies which programming language each one picks. The output
+is a table that tells a developer at a glance: *if I ask Claude / GPT / Gemini for "a
+script that..." or "a small web app for...", what am I going to get back?*
+
+The whole point is the **defaults**. Prompts deliberately never mention a language and
+never invite the model to choose one — that would change what's being measured.
+
+---
+
+## Latest results
+
+5 models × 16 tasks × 5 samples = 400 classified runs (Gemini results pending — see
+[Limitations](#limitations)). Full table in [REPORT.md](REPORT.md).
+
+### Default language across all tasks
+
+| Model            | Default    | Distribution                                |
+| ---              | ---        | ---                                         |
+| Claude Opus 4.7  | **python** | python 51, javascript 13, go 11, html 5     |
+| Claude Sonnet 4.6| **python** | python 59, javascript 9, go 7, html 5       |
+| Claude Haiku 4.5 | **python** | python 55, javascript 23, html 2            |
+| GPT-5            | **python** | python 56, javascript 13, go 6, html 5      |
+| GPT-5 mini       | **python** | python 56, javascript 12, go 8, html 4      |
+
+### Headline findings
+
+- **Python is the universal default.** Across 5 models, **scripting and CLI tasks are
+  Python 100% of the time** (5/5 samples on every prompt, every model). No exceptions.
+- **The default flips to JavaScript only for web apps.** 4 of 5 models default to
+  JavaScript for the web category; Sonnet 4.6 is the holdout, still leaning Python.
+- **Backend services are model-dependent.** Sonnet 4.6 leans hard Python (17/20).
+  Haiku 4.5 actually prefers JavaScript over Python (11 vs 9). GPT-5 / GPT-5 mini
+  reach for Python first with Go as a strong secondary.
+- **Go shows up almost exclusively for `rate_limited_proxy` and CLI tools** — and
+  even there it's model-dependent. Opus and GPT-5 mini go 5/5 Go on the proxy task;
+  Sonnet and Haiku stay on Python.
+- **No model picked Rust, TypeScript, Java, Ruby, or anything else even once.** The
+  observed language set is `{python, javascript, go, html}` plus a tiny smattering.
+
+See [REPORT.md](REPORT.md) for the full model × task grid and per-category breakdown.
+
+---
 
 ## How it works
 
-1. `tasks.yaml` — language-neutral prompts. Each describes WHAT to build, never HOW or
-   in what language. If a prompt mentions a language or hints "use whatever you like",
-   it biases the measurement, so the prompts are kept clean.
-2. `models.yaml` — the models under test (Anthropic / OpenAI / Google to start; any
-   OpenAI-compatible endpoint slots in for open-weight models like DeepSeek, Llama,
-   Qwen via OpenRouter, Together, Fireworks, vLLM, etc.).
-3. `whichlang/run.py` — for each `(model, task, sample_idx)` not already in
-   `results/runs.jsonl`, calls the model, sends the response to a judge LLM that
-   identifies the primary language, and appends one JSONL line. Resumable; safe to
-   ctrl-C and re-run.
-4. `whichlang/report.py` — aggregates the JSONL into `REPORT.md`: a per-model default,
-   a per-category breakdown, and a full model × task grid.
+1. **`tasks.yaml`** — 16 language-neutral prompts across 4 categories (scripting, backend,
+   CLI, web). Each describes WHAT to build, never HOW or in what language.
+2. **`models.yaml`** — the models under test. Provider abstraction supports Anthropic,
+   OpenAI, Google, and any OpenAI-compatible endpoint (which covers Ollama, OpenRouter,
+   Together, Fireworks, DeepInfra, vLLM, etc. — adding open models is a YAML edit).
+3. **`whichlang/run.py`** — for each `(model, task, sample_idx)` not already in
+   `results/runs.jsonl`, calls the model, classifies the response, appends one JSONL line.
+   Resumable; safe to ctrl-C and re-run.
+4. **`whichlang/classify.py`** — a judge LLM (Claude Haiku 4.5) reads the response and
+   emits a single canonical language token. The judge sees only the response, never which
+   model produced it, so it can't bias toward expected defaults.
+5. **`whichlang/report.py`** — aggregates JSONL → `REPORT.md`: per-model defaults,
+   per-category breakdowns, and the full model × task grid.
 
-The judge LLM is a separate model from the ones under test, sees only the response
-text (not which model produced it), and is constrained to emit a single lowercase
-language token.
+### Methodology notes
+
+- **5 samples per (model, task)** to surface non-determinism (a model that's 4/5 Python,
+  1/5 Go is genuinely split). Default temperature; no seed.
+- **Same system prompt for every model**: "write working code, pick whatever language and
+  tools you think are best, don't ask clarifying questions, don't list multiple options."
+  Without the last clause many models offer 2–3 alternatives, which obscures the default.
+- **Reasoning models** (GPT-5, o-series) burn token budget on hidden chain-of-thought
+  before producing visible output. The OpenAI call uses `max_completion_tokens=16384` so
+  reasoning + response both fit.
+- **Errors are kept in JSONL but excluded from totals** and get re-attempted on resume.
+
+---
+
+## Limitations
+
+- **No Gemini data yet.** The benchmark run hit Google's free-tier quota mid-flight:
+  Gemini 2.5 Pro is at 0/80 runs, Flash at 3/80. Re-run with a billed Google AI Studio
+  key or wait for quota reset.
+- **No open models yet.** The current run only covers Anthropic + OpenAI. See
+  [plan.md](plan.md) for the DeepSeek / Qwen / Llama expansion.
+- **Single judge** (Claude Haiku 4.5). A judge that's wrong systematically would be hard
+  to catch from this side. The judge prompt is constrained to one token and the raw
+  response is stored, so a second judge could rescore the existing JSONL without re-running.
+- **English prompts only.** Defaults may differ in other languages.
+- **Snapshot in time.** Model defaults change with versions; results are dated by commit.
+
+---
 
 ## Setup
 
@@ -34,7 +98,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 export ANTHROPIC_API_KEY=...
 export OPENAI_API_KEY=...
-export GEMINI_API_KEY=...
+export GEMINI_API_KEY=...   # optional
 ```
 
 ## Run
@@ -46,19 +110,19 @@ export GEMINI_API_KEY=...
 # subset
 .venv/bin/python -m whichlang.run --models claude-opus-4-7,gpt-5 --tasks csv_to_json --samples 3
 
-# generate the markdown report from results/runs.jsonl
+# render REPORT.md from results/runs.jsonl
 .venv/bin/python -m whichlang.report
 ```
 
 ## Adding models
 
-Edit `models.yaml`. For an open-weight model behind an OpenAI-compatible host:
+Edit `models.yaml`. For an OpenAI-compatible host (OpenRouter, Together, Ollama, vLLM, …):
 
 ```yaml
-- id: deepseek-v3
+- id: deepseek-v3.1
   provider: openai_compatible
   model_id: deepseek/deepseek-chat
-  display_name: DeepSeek V3
+  display_name: DeepSeek V3.1
   base_url: https://openrouter.ai/api/v1
   api_key_env: OPENROUTER_API_KEY
 ```
@@ -67,10 +131,8 @@ No code changes needed.
 
 ## Adding tasks
 
-Edit `tasks.yaml`. Each task is `{id, category, prompt}`. Existing categories are
-`scripting`, `backend`, `cli`, `web`; add new ones freely. Keep prompts language-neutral
-— if you mention a language or invite the model to choose, you change what's being
-measured.
+Edit `tasks.yaml`. Each task is `{id, category, prompt}`. Keep prompts language-neutral —
+if you mention a language or invite the model to choose, you change what's being measured.
 
 ## Files
 
@@ -83,4 +145,15 @@ whichlang/run.py        # main runner — resumable
 whichlang/report.py     # JSONL → REPORT.md
 results/runs.jsonl      # raw per-run data (committed so others can re-aggregate)
 REPORT.md               # generated table
+plan.md                 # roadmap and open questions
 ```
+
+## Contributing
+
+Open to PRs that add models, tasks, or alternative judges. If you add a model, please
+include the run output (a new `results/runs.jsonl` is fine to commit — it's append-only
+and others can re-aggregate it).
+
+## License
+
+MIT.
