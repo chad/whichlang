@@ -124,6 +124,21 @@ tasks:
       own todos, and see only their own. Persist everything to a database. It should be
       one deployable project — write everything you need.
 
+  - id: b2b_saas
+    category: fullstack
+    prompt: |
+      Build me a B2B SaaS product. Companies sign up, the person who signs up can invite
+      teammates by email, each company only sees its own data, and there's monthly
+      subscription billing. Persist everything to a database. It should be one deployable
+      project.
+
+  - id: online_store
+    category: fullstack
+    prompt: |
+      Build me an online store. Shoppers browse a product catalog, add items to a cart, and
+      check out with card payment. I can manage products and view orders in an admin area.
+      Persist everything to a database. It should be one deployable project.
+
   # --- systems: scale & constraint force non-Python defaults ---
   - id: tcp_echo_100k
     category: systems
