@@ -139,6 +139,35 @@ tasks:
       check out with card payment. I can manage products and view orders in an admin area.
       Persist everything to a database. It should be one deployable project.
 
+  - id: team_inbox
+    category: fullstack
+    prompt: |
+      Build me a shared team inbox. Incoming messages from customers land in one place, any
+      team member can open a message, reply, and mark it resolved, and everyone sees the
+      current status. Persist everything to a database. It should be one deployable project.
+
+  - id: issue_tracker
+    category: fullstack
+    prompt: |
+      Build me an issue tracker. Teams create projects, open issues with a title and
+      description, assign them to people, move them through statuses (open, in progress,
+      done), and comment on them. Persist everything to a database. It should be one
+      deployable project.
+
+  - id: approval_workflow
+    category: fullstack
+    prompt: |
+      Build me a document approval tool. Someone uploads a document, sends it to one or more
+      people for sign-off, and can see who has approved and who is still pending. Persist
+      everything to a database. It should be one deployable project.
+
+  - id: internal_admin
+    category: fullstack
+    prompt: |
+      Build me an internal admin dashboard over a database of customers, orders, and
+      products. Staff log in and can list, search, create, edit, and delete records across
+      these tables. Persist everything. It should be one deployable project.
+
   # --- systems: scale & constraint force non-Python defaults ---
   - id: tcp_echo_100k
     category: systems
