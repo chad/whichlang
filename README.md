@@ -14,63 +14,20 @@ never invite the model to choose one — that would change what's being measured
 
 ## Latest results
 
-11 models × 23 tasks × 5 samples. Full table in [REPORT.md](REPORT.md).
+11 models × 23 tasks × 5 samples (run 2026-05-30). The task set is split into two
+tiers: 16 small/common tasks (scripting, backend, CLI, web) plus 7 substantial tasks
+with scale, platform, or domain constraints (fullstack app with auth, 100K-connection
+TCP server, 500GB single-pass log analysis, 5K-worker job runner, Mac menu-bar app,
+DAO smart contract, Kubernetes operator).
 
-The task set is split into two tiers:
+**The one-sentence summary.** On the small tasks, every model defaults to Python; on
+the substantial tasks the defaults explode into ecosystem diversity, and the
+divergences across models tell you more about each model's training mix than any of
+the small-task results do.
 
-- **Tier 1 — small, common tasks** (16 tasks across scripting, backend, cli, web). What
-  do models reach for when you ask for "a script to ..." or "a small ... app"?
-- **Tier 2 — substantial tasks** (7 tasks across fullstack, systems, realtime, desktop,
-  domain). Tasks with scale, platform, or domain constraints that make the universal
-  Python default actually wrong — designed to surface real differentiation.
+### Default language overall
 
-### Headline findings
-
-**On tier-1 (small tasks): Python is the universal default.** All 8 models default to
-Python overall. Scripting and CLI tasks are Python ~100% of the time across the board.
-The only category where the default flips is `web` (4 of 6 well-tested models switch to
-JavaScript; Qwen3 Coder and Llama 4 stay on Python).
-
-**On tier-2 (substantial tasks): the default explodes into diversity.** This is the more
-interesting finding. Each model picks a *different* primary tool depending on the actual
-constraint, and the picks across models diverge meaningfully:
-
-| Task                  | What most models reached for                                    |
-| ---                   | ---                                                             |
-| `fullstack_todo`      | **JavaScript** dominant; **Mistral & Kimi default to TypeScript**; Grok picks plain HTML twice |
-| `tcp_echo_100k`       | **Rust** dominant; **Qwen → Go 5/5**, **Grok → Go/C 5/5**, **GPT-5 mini → C 4/5** — Rust is not unanimous |
-| `log_histogram_500gb` | **Python** (8/11); **GPT-5 → Go + awk**, **Kimi → Rust 3/5**, **Grok → Go**   |
-| `job_runner_5k`       | **Go** (7/11); Haiku, Qwen, Llama stayed on Python              |
-| `mac_menubar_llm`     | **Swift** (7/11); Sonnet, Haiku, Qwen went **Python** (rumps/pyobjc) |
-| `governance_contract` | **Solidity** (11/11) — universal, no exceptions across any model |
-| `k8s_operator_backup` | **Python** (8/11); **DeepSeek & Mistral → Go 5/5** (idiomatic kubebuilder); Kimi splits 3/2 |
-
-**Stand-out divergences worth calling out:**
-
-- **TypeScript bias is European/Chinese, not US.** Mistral Large (4/5 TS) and Kimi
-  K2.6 (3/5 TS) are the only models that default to TypeScript for the fullstack
-  app. Every US model goes plain JavaScript. New axis of differentiation.
-- **Qwen3 Coder picks Go (not Rust) for 100K TCP connections** (5/5 Go). Every
-  Western frontier model went Rust. Qwen reaches for goroutines.
-- **Grok 4.3 split Go/C for 100K TCP** (3 Go, 2 C, zero Rust). Only model that
-  refused Rust entirely for this task. Also produced 11 HTML responses across
-  categories — likes shipping a single-file HTML app where others build a stack.
-- **Kimi K2.6 is the only model to flip log-500gb to Rust** (3/5 Rust). The
-  Rust-friendliest model in the dataset overall (8 Rust picks, more than any other).
-- **GPT-5 mini picks C, not Rust**, for the same TCP server. 4/5 samples in plain C.
-- **DeepSeek and Mistral both write idiomatic Go for the k8s operator** (5/5 each).
-  Every other model wrote a Python script wrapping kubectl.
-- **Sonnet, Haiku, and Qwen stay on Python for the Mac menu-bar app** while the
-  rest default to Swift. Python pickers know `rumps`/`pyobjc`.
-- **Mistral Large is the most-diverse-overall model.** Top categories: python 60,
-  go 20, javascript 16, rust 5, swift 5, solidity 5, typescript 4. Picks
-  appropriately by task more than any other model in the test.
-- **Solidity recognition is universal.** 11/11 models wrote Solidity unprompted
-  for the DAO contract. No model hallucinated a "smart-contract.py" anywhere.
-
-### Default language overall (tier-1 + tier-2 combined)
-
-| Model               | Default    | Distribution                                            |
+| Model               | Default    | Distribution (tier-1 + tier-2 combined) |
 | ---                 | ---        | ---                                                     |
 | Claude Opus 4.7     | **python** | python 62, go 20, javascript 16, html 5, swift 5, solidity 5, rust 1, typescript 1 |
 | Claude Sonnet 4.6   | **python** | python 74, javascript 14, go 13, html 5, rust 5, solidity 4, +1 other |
@@ -84,7 +41,40 @@ constraint, and the picks across models diverge meaningfully:
 | Grok 4.3            | **python** | python 65, go 18, html 11, javascript 8, swift 5, solidity 5, c 2, bash 1 |
 | Kimi K2.6           | **python** | python 61, javascript 14, go 13, rust 8, html 6, solidity 5, swift 4, typescript 3 |
 
-See [REPORT.md](REPORT.md) for the full model × task grid and per-category breakdown.
+### Highlights from the 2026-05-30 run
+
+A few of the most interesting findings — full prose write-up in
+[`analysis/2026-05-30.md`](analysis/2026-05-30.md):
+
+- **TypeScript bias is non-US.** Mistral (4/5) and Kimi (3/5) default to TypeScript
+  for the fullstack todo. Every US-trained model goes plain JavaScript. First clean
+  cultural-lineage signal in the dataset.
+- **Grok refuses Rust for the 100K TCP server** — splits Go/C 3/2. The only model
+  in the dataset to write zero Rust for this task. Also produces 11 HTML responses
+  across categories: prefers to ship one file when others build a stack.
+- **Kimi K2.6 is the most Rust-friendly model** (8 picks total). The only one to
+  flip the 500GB log task to Rust (3/5).
+- **DeepSeek and Mistral both write idiomatic Go for the Kubernetes operator**
+  (5/5 each). Every other model wraps `kubectl` in Python.
+- **Mistral Large is the most-balanced model overall** — meaningful counts across
+  Python, Go, JavaScript, Rust, Swift, Solidity, TypeScript without one heavy
+  non-Python concentration. Picks the right tool for the task more consistently
+  than any other model.
+- **Solidity is universal** (11/11) for the DAO contract — no model hallucinated
+  a "contract.py".
+
+See [`REPORT.md`](REPORT.md) for the full model × task grid and per-category
+breakdown, or [`analysis/2026-05-30.md`](analysis/2026-05-30.md) for the full
+prose analysis.
+
+### Analyses
+
+Each run gets a dated prose write-up under `analysis/`, so it's clear what was
+tested when. Newest first.
+
+- [`analysis/2026-05-30.md`](analysis/2026-05-30.md) — 11 models (added Mistral
+  Large 2512, Grok 4.3, Kimi K2.6), 23 tasks (introduced 7 tier-2 substantial
+  tasks). TypeScript bias emerges; Grok shows distinct profile.
 
 ---
 
