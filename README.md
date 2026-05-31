@@ -78,6 +78,19 @@ tested when. Newest first.
 
 ---
 
+## Related work
+
+- **[adrianco/retort](https://github.com/adrianco/retort)** — Platform Evolution
+  Engine by Adrian Cockcroft. Holds the task constant and *forces* a stack
+  (language × model × tooling), then runs the code, executes tests, scores
+  findings, and does ANOVA over the results. Where whichlang asks "what does
+  the model reach for?", retort asks "given a stack, how good is the output?"
+  Revealed preference vs. outcome quality — the two halves of the same picture.
+  A natural follow-up: feed whichlang's modal picks into retort as each model's
+  "natural" stack and check whether the default is the *right* default.
+
+---
+
 ## How it works
 
 1. **`tasks.yaml`** — 16 language-neutral prompts across 4 categories (scripting, backend,
